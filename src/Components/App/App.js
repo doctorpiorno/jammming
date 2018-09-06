@@ -46,11 +46,17 @@ class App extends Component {
       }})
 
     if (alreadyAdded !== true) {
-      this.setstate(track);
+      /* Step 45: Remember that setState takes an OBJECT, dammit.
+      Using concat here as we're adding to an array of objects, so simply passing track to playlistTracks via setState would replace our array w/ an object. */
+      console.log(track);
+      this.setState({
+        playlistTracks: this.state.playlistTracks.concat([track])
+    });
     }
   }
 
-//Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need extra brackets, like this: onadd={this.addTrack()}.
+/* Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need to be
+onadd={this.addTrack()}, but we'll know soon enough. */
   render() {
     return (
       <div>
