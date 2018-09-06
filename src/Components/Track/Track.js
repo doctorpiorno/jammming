@@ -4,7 +4,7 @@ import "./Track.css";
 class Track extends React.Component {
 
 //Step 27: renderAction should check whether we're adding or removing track.
-//Fairly sure I'll to have to bind "this" at some point.
+//Fairly sure I'll to have to bind "this".
 
   renderAction() {
     if (this.props.isRemoval) {
@@ -18,10 +18,10 @@ class Track extends React.Component {
     return (
       <div className="Track">
         <div className="Track-information">
-          <h3>TRACKNAME</h3>
-          <p>TRACKARTIST | TRACKALBUM</p>
+          <h3>{this.props.name}</h3>
+          <p>{this.props.artist} | {this.props.album}</p>
         </div>
-        <a class="Track-action">{this.renderAction()}</a>
+        <a className="Track-action">{this.renderAction()}</a>
       </div>
     )
   }
