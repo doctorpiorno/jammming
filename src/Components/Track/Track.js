@@ -26,15 +26,12 @@ class Track extends React.Component {
   }
 
   addTrack() {
-    /* Step 45: PICK UP FROM HERE.
-    So for some reason the track id is not being passed along from TrackList,
-    hence I can only ever add one song before all the following songs are marked
-    as duplicates. Maybe "key" has skipped a jump somewhere?
-     */
-
-    console.log(this.props.key);
+    /* Step 45: Track id is taken from this.props.id, not this.props.key,
+    because "key" is a special snowflake prop that returns "undefined"
+    when accessed. See: https://reactjs.org/warnings/special-props.html
+    */
     let track = {
-      id: this.props.key,
+      id: this.props.id,
       name: this.props.name,
       artist: this.props.artist,
       album: this.props.album
