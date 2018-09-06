@@ -7,18 +7,20 @@ import Playlist from '../Playlist/Playlist';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.addTrack = this.addTrack.bind(this); // Step 42: Bind(this) to .addTrack()
 
-    //Step 31: Not sure I'm doing this properly. Calling the property
-    //foundTracks rather than searchResults because the official policy
-    //of calling everything by the exact same name makes my head hurt.
-    //As I understand it, on this step, we're sending SearchResults a
-    //mock response from the Spotify API.
+    //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
+    //TEST OBJECTS TO BE REMOVED LATER.
     this.state = {
       foundTracks: [
-        {name: "Test Song",
-        artist: "Test Artist",
-        album: "Test Album",
-        id: "Test ID"}
+        {name: "Test Song 1",
+        artist: "Test Artist 1",
+        album: "Test Album 1",
+        id: "01"},
+        {name: "Test Song 2",
+        artist: "Test Artist 2",
+        album: "Test Album 2",
+        id: "02"}
       ],
       playlistName: "Test Playlist",
       playlistTracks: [
@@ -30,6 +32,25 @@ class App extends Component {
     }
   }
 
+  addTrack(track) {
+    /* Step 41: This is seriously ghetto logic and a lot less elegant than the solution in the hint, but I want to see if it will work. The much nicer solution in the hint is:
+    if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
+      return;
+    } */
+
+    let alreadyAdded = false;
+
+    this.state.playlistTracks.forEach(playlistTrack => {
+      if (playlistTrack.id === track.id) {
+        alreadyAdded = true;
+      }})
+
+    if (alreadyAdded !== true) {
+      this.setstate(track);
+    }
+  }
+
+//Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need extra brackets, like this: onadd={this.addTrack()}.
   render() {
     return (
       <div>
@@ -37,7 +58,7 @@ class App extends Component {
         <div className="App">
           <SearchBar />
           <div className="App-playlist">
-            <SearchResults foundTracks={this.state.foundTracks} />
+            <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack}/>
             <Playlist playlistTracks={this.state.playlistTracks}/>
           </div>
         </div>
