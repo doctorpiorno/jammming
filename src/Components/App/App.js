@@ -13,6 +13,10 @@ class App extends Component {
     this.removeTrack = this.removeTrack.bind(this);
     // Step 57: Bind(this) to .updatePlaylistName(). See above.
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
+    // Step 64: Bind(this) to .savePlaylist(). See above.
+    this.savePlaylist = this.savePlaylist.bind(this);
+    // Step 68: Bind(this) to .search(). See above.
+    this.search = this.search.bind(this);
 
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
     //TEST OBJECTS TO BE REMOVED LATER.
@@ -41,6 +45,18 @@ class App extends Component {
     this.setState({
       playlistName: name
     });
+  }
+
+  savePlaylist() {
+    // Step 63: This is how I understand the instructions.
+    let trackURIs = [];
+      this.state.playlistTracks.forEach(track => {
+        trackURIs.push("spotify:track:" + track.id);
+      });
+  }
+
+  search(term) {
+    console.log(term);
   }
 
   addTrack(track) {
@@ -83,10 +99,11 @@ class App extends Component {
       <div>
         <h1>Ja<span className="highlight">mmm</span>ing</h1>
         <div className="App">
-          <SearchBar />
+          <SearchBar onSearch={this.search} />
           <div className="App-playlist">
             <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack} />
-            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} />
+            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName}
+            onSave={this.savePlaylist} />
           </div>
         </div>
       </div>
