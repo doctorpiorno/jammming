@@ -11,6 +11,8 @@ class App extends Component {
     this.addTrack = this.addTrack.bind(this);
     // Step 50: Bind(this) to .removeTrack(). See above.
     this.removeTrack = this.removeTrack.bind(this);
+    // Step 57: Bind(this) to .updatePlaylistName(). See above.
+    this.updatePlaylistName = this.updatePlaylistName.bind(this);
 
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
     //TEST OBJECTS TO BE REMOVED LATER.
@@ -35,8 +37,14 @@ class App extends Component {
     }
   }
 
+  updatePlaylistName(name) {
+    this.setState({
+      playlistName: name
+    });
+  }
+
   addTrack(track) {
-    /* Step 41: This is seriously ghetto logic and a lot less elegant than the solution in the hint, but I want to see if it will work. The much nicer solution in the hint is:
+    /* Step 41: This is seriously ghetto logic and a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
     if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
       return;
     } */
@@ -77,8 +85,8 @@ class App extends Component {
         <div className="App">
           <SearchBar />
           <div className="App-playlist">
-            <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack}/>
-            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack}/>
+            <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack} />
+            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onNameChange={this.updatePlaylistName} />
           </div>
         </div>
       </div>

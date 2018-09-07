@@ -38,7 +38,6 @@ class Track extends React.Component {
       artist: this.props.artist,
       album: this.props.album
     }
-    console.log(track); //CAN BE DELETED NOW
     this.props.onRemove(track);
   }
 
