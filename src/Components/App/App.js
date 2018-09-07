@@ -7,27 +7,30 @@ import Playlist from '../Playlist/Playlist';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.addTrack = this.addTrack.bind(this); // Step 42: Bind(this) to .addTrack()
+    // Step 42: Bind(this) to .addTrack(). Not 100% sure why this is needed? $MANUCHECK
+    this.addTrack = this.addTrack.bind(this);
+    // Step 50: Bind(this) to .removeTrack(). See above.
+    this.removeTrack = this.removeTrack.bind(this);
 
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
     //TEST OBJECTS TO BE REMOVED LATER.
     this.state = {
       foundTracks: [
-        {name: "Test Song 1",
-        artist: "Test Artist 1",
-        album: "Test Album 1",
-        id: "01"},
-        {name: "Test Song 2",
-        artist: "Test Artist 2",
-        album: "Test Album 2",
-        id: "02"}
+        {name: "Ghost Love Score",
+        artist: "Nightwish",
+        album: "Once",
+        id: "330345"},
+        {name: "Que tengas suertecita",
+        artist: "Enrique Bunbury",
+        album: "Freak Show",
+        id: "124114"}
       ],
       playlistName: "Test Playlist",
       playlistTracks: [
-        {name: "Added song",
-        artist: "Well-liked artist",
-        album: "Famous album",
-        id: "An id"}
+        {name: "Bongo Bong",
+        artist: "Manu Chao",
+        album: "Clandestino",
+        id: "659821"}
       ]
     }
   }
@@ -47,16 +50,26 @@ class App extends Component {
 
     if (alreadyAdded !== true) {
       /* Step 45: Remember that setState takes an OBJECT, dammit.
-      Using concat here as we're adding to an array of objects, so simply passing track to playlistTracks via setState would replace our array w/ an object. */
-      console.log(track);
+      Using concat here as we're adding to an array of objects, so simply passing track to playlistTracks via setState would replace our array w/ an object and we don't want that. */
+
+      console.log(track); //CAN BE DELETED NOW
+
       this.setState({
         playlistTracks: this.state.playlistTracks.concat([track])
     });
     }
   }
 
-/* Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need to be
-onadd={this.addTrack()}, but we'll know soon enough. */
+  removeTrack(track) {
+    /* Step 49: I was going to do this with .findIndex .splice but this Looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
+    */
+
+    this.setState({
+        playlistTracks: this.state.playlistTracks.filter(element => element.id !== track.id)
+        });
+  }
+
+  /* Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need to be onadd={this.addTrack()}, but we'll know soon enough. */
   render() {
     return (
       <div>
@@ -65,7 +78,7 @@ onadd={this.addTrack()}, but we'll know soon enough. */
           <SearchBar />
           <div className="App-playlist">
             <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack}/>
-            <Playlist playlistTracks={this.state.playlistTracks}/>
+            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack}/>
           </div>
         </div>
       </div>
