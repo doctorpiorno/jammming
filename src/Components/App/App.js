@@ -3,6 +3,7 @@ import './App.css';
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
+import Spotify from '../../util/Spotify';
 
 class App extends Component {
   constructor(props) {
@@ -56,7 +57,12 @@ class App extends Component {
   }
 
   search(term) {
-    console.log(term);
+    Spotify.search(term).then (result => {
+      //Note to self: this.setstate takes brackets, not =.
+      this.setState({
+        foundTracks: result
+      })
+    })
   }
 
   addTrack(track) {
@@ -76,8 +82,6 @@ class App extends Component {
       /* Step 45: Remember that setState takes an OBJECT, dammit.
       Using concat here as we're adding to an array of objects, so simply passing track to playlistTracks via setState would replace our array w/ an object and we don't want that. */
 
-      console.log(track); //CAN BE DELETED NOW
-
       this.setState({
         playlistTracks: this.state.playlistTracks.concat([track])
     });
@@ -85,7 +89,7 @@ class App extends Component {
   }
 
   removeTrack(track) {
-    /* Step 49: I was going to do this with .findIndex .splice but this Looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
+    /* Step 49: I was going to do this with .findIndex and .splice but this Looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
     */
 
     this.setState({
@@ -93,7 +97,7 @@ class App extends Component {
         });
   }
 
-  /* Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need to be onadd={this.addTrack()}, but we'll know soon enough. */
+  /* Step 42: Fairly sure onAdd={this.addTrack} does *NOT* need to be onadd={this.addTrack()}, but we'll know soon enough. CONFIRMED. */
   render() {
     return (
       <div>
