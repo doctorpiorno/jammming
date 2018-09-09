@@ -38,17 +38,16 @@ let Spotify = {
     //Steps 84 and up. Using page 3 of Requests II for reference.
     /* Note this is step 2 in the Implicit Grant Flow documentation, not 4. So this is not really in the instructions, but this is where we need to call getAccessToken. Makes sense, as otherwise we'd always be passing the default value which is null, resulting in the error 400 I kept getting earlier. */
     let accessToken = Spotify.getAccessToken();
-    return fetch(`${searchUrl}type=track&q=${term}`, {
-      headers: {
-       Authorization: "Bearer " + accessToken
-      }
-      // Surprisingly important: there needs to be a blank space after "Bearer". Otherwise the auth header is not valid and you keep getting an error 400. Like I did. For a long time.
-    }).then(response => {
+    // Surprisingly important: there needs to be a blank space after "Bearer". Otherwise the auth header is not valid and you keep getting an error 400. Like I did. For a long time.
+    let authHeader = {
+      Authorization: "Bearer " + accessToken
+    };
+    return fetch (`${searchUrl}type=track&q=${term}`, {headers: authHeader}).then(response => {
       if (response.ok) {
         return response.json();
       	} throw new Error("Request failed!");
     	}, networkError => {
-      console.log (networkError.message);
+        console.log (networkError.message);
     	}).then (jsonResponse => {
         /* Create an empty array. If there be tracks, push them onto it. JSON response looks like /tracks/items/0, 1, 2, etc., which are the actual tracks. See https://developer.spotify.com/documentation/web-api/reference/object-model/#track-object-simplified. */
         let resultArray = [];
@@ -63,9 +62,53 @@ let Spotify = {
         })
         return resultArray;
     });
+  },
+
+  savePlaylist(playlistName, trackURIs) {
+    /* Step 90: Check if arguments are empty before proceeding.
+    Also, check logic of conditional statement when fully awake. */
+    if (!(playlistName && trackURIs)) {
+      return;
+    }
+
+    /* Step 91: Define default variables. */
+    let accessToken = Spotify.getAccessToken();
+    let authHeader = {
+      Authorization: "Bearer " + accessToken
+    };
+    let userID;
+    let playlistID;
+
+    /* Step 92: Request user name. */
+    const userProfileUrl = "https://api.spotify.com/v1/me";
+    return fetch (userProfileUrl, {headers: authHeader}).then(response => {
+      if (response.ok) {
+        return response.json();
+      } throw new Error("Request failed!");
+    }, networkError => {
+      console.log (networkError.message);
+    }).then (jsonResponse => {
+      userID = jsonResponse.id;
+      return userID;
+    }).then (userID => {
+      /* Step 93: Use returned user ID to create new playlist and return playlist ID. Probably a couple things wrong here; apparently I need to stringify the body and indicate method: "POST". */
+      const playlistCreationUrl = `https://api.spotify.com/v1/users/${userID}/playlists`
+      return fetch (playlistCreationUrl, {
+        headers: authHeader,
+        body: {name: playlistName, description: "Created with Jammming.", public: false}
+      }
+    ).then(response => {
+      if (response.ok) {
+        return response.json();
+      } throw new Error("Request failed!");
+    }, networkError => {
+      console.log (networkError.message);
+    }).then (jsonResponse => {
+      playlistID = jsonResponse.id;
+      return playlistID;
+    });
+    }).then () /* PICK UP FROM HERE: Step 94: Use the Spotify playlist endpoints to find a request that adds tracks to a playlist. */
   }
 }
-
-save
 
 export default Spotify;
