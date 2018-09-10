@@ -2,7 +2,7 @@ let userAccessToken;
 let expiryTime;
 const clientID = "66315be50a5d42af814984f8a9cf4e2a";
 const redirectURI = "http://localhost:3000/";
-const searchUrl = "https://api.spotify.com/v1/search?";
+const baseUrl = "https://api.spotify.com/v1";
 const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
 
 /* Step 76: "In Spotify.js create a Spotify module as an empty object."
@@ -42,7 +42,7 @@ let Spotify = {
     let authHeader = {
       Authorization: "Bearer " + accessToken
     };
-    return fetch (`${searchUrl}type=track&q=${term}`, {headers: authHeader}).then(response => {
+    return fetch (`${baseUrl}/search?type=track&q=${term}`, {headers: authHeader}).then(response => {
       if (response.ok) {
         return response.json();
       	} throw new Error("Request failed!");
@@ -66,7 +66,7 @@ let Spotify = {
 
   savePlaylist(playlistName, trackURIs) {
     /* Step 90: Check if arguments are empty before proceeding.
-    Also, check logic of conditional statement when fully awake. */
+    To do: Double-check logic of conditional statement when fully awake. */
     if (!(playlistName && trackURIs)) {
       return;
     }
@@ -80,7 +80,7 @@ let Spotify = {
     let playlistID;
 
     /* Step 92: Request user name. */
-    const userProfileUrl = "https://api.spotify.com/v1/me";
+    const userProfileUrl = `${baseUrl}/me`;
     return fetch (userProfileUrl, {headers: authHeader}).then(response => {
       if (response.ok) {
         return response.json();
@@ -89,15 +89,18 @@ let Spotify = {
       console.log (networkError.message);
     }).then (jsonResponse => {
       userID = jsonResponse.id;
+      console.log ("User ID is: " + userID);
       return userID;
     }).then (userID => {
-      /* Step 93: Use returned user ID to create new playlist and return playlist ID. Probably a couple things wrong here; apparently I need to stringify the body and indicate method: "POST". */
-      const playlistCreationUrl = `https://api.spotify.com/v1/users/${userID}/playlists`
-      return fetch (playlistCreationUrl, {
+      /* Step 93: Use returned user ID to create new playlist and return playlist ID. Have to specify "POST" as method; otherwise the API complains GET/HEAD requests cannot include a body; also apparently need to stringify the body but not too sure why? $MANUCHECK.
+      I initially had the playlist set to public: false but apparently that causes the API to return an error 403 because I guess I'm not requesting the right permissions on auth; see https://github.com/rckclmbr/pyportify/issues/60. */
+      const createPlaylistURL = `${baseUrl}/users/${userID}/playlists`
+      return fetch (createPlaylistURL, {
+        method: "POST",
         headers: authHeader,
-        body: {name: playlistName, description: "Created with Jammming.", public: false}
-      }
-    ).then(response => {
+        body: JSON.stringify({name: playlistName, description: "Created with Jammming."})
+      });
+    }).then(response => {
       if (response.ok) {
         return response.json();
       } throw new Error("Request failed!");
@@ -105,10 +108,11 @@ let Spotify = {
       console.log (networkError.message);
     }).then (jsonResponse => {
       playlistID = jsonResponse.id;
+      console.log(playlistID);
       return playlistID;
     });
-    }).then () /* PICK UP FROM HERE: Step 94: Use the Spotify playlist endpoints to find a request that adds tracks to a playlist. */
   }
+
 }
 
 export default Spotify;
