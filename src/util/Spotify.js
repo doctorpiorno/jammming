@@ -1,7 +1,7 @@
 let userAccessToken;
 let expiryTime;
 const clientID = "66315be50a5d42af814984f8a9cf4e2a";
-const redirectURI = "http://localhost:3000/";
+const redirectURI = "http://doctorpiorno.surge.sh";
 const baseUrl = "https://api.spotify.com/v1";
 const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
 
