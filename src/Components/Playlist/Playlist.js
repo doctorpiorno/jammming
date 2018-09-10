@@ -8,7 +8,7 @@ class Playlist extends React.Component {
     this.handleNameChange = this.handleNameChange.bind(this);
   }
 
-  /* Step 59: Not sure this was how we handled getting an input value from an event. Check notes if it fails. */
+  /* Step 59: Not sure this was how we handled getting an input value from an event. Check notes if it fails. Note: Nope, it's OK. */
 
   handleNameChange(event) {
     this.props.onNameChange(event.target.value)

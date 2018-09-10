@@ -20,25 +20,10 @@ class App extends Component {
     this.search = this.search.bind(this);
 
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
-    //TEST OBJECTS TO BE REMOVED LATER.
     this.state = {
-      foundTracks: [
-        {name: "Ghost Love Score",
-        artist: "Nightwish",
-        album: "Once",
-        id: "330345"},
-        {name: "Que tengas suertecita",
-        artist: "Enrique Bunbury",
-        album: "Freak Show",
-        id: "124114"}
-      ],
-      playlistName: "Test Playlist",
-      playlistTracks: [
-        {name: "Bongo Bong",
-        artist: "Manu Chao",
-        album: "Clandestino",
-        id: "659821"}
-      ]
+      foundTracks: [],
+      playlistName: "New Playlist",
+      playlistTracks: []
     }
   }
 
@@ -55,15 +40,14 @@ class App extends Component {
         trackURIs.push("spotify:track:" + track.id);
       });
     Spotify.savePlaylist(this.state.playlistName, this.state.playlistTracks);
-    this.updatePlaylistName("New Playlist");
-    this.setState({
-      playlistTracks: []
-    });
+    // this.updatePlaylistName("New Playlist");
+    this.setState({playlistTracks: []});
+    this.setState({playlistName: "New Playlist"});
   }
 
   search(term) {
     Spotify.search(term).then (result => {
-      //Note to self: this.setstate takes brackets, not =.
+      //Note to self: this.setstate takes brackets + an object, not =. Get that into your slow head, Fran.
       this.setState({
         foundTracks: result
       })
@@ -71,7 +55,7 @@ class App extends Component {
   }
 
   addTrack(track) {
-    /* Step 41: This is seriously ghetto logic and a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
+    /* Step 41: This is a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
     if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
       return;
     } */
