@@ -70,7 +70,6 @@ let Spotify = {
         console.log (networkError.message);
       }).then (jsonResponse => {
         // Return user id.
-        console.log("Result of getUserID: " + jsonResponse.id);  //CAN BE DELETED
         return jsonResponse.id;
       })
     },
@@ -79,9 +78,7 @@ let Spotify = {
     /* Refinement of step 93: Use returned user ID to create new playlist and return playlist ID. Have to specify "POST" as method, as otherwise the API complains GET/HEAD requests cannot include a body; also apparently need to stringify the body but not too sure why? $*/
     let accessToken = Spotify.getAccessToken();
 
-
     this.getUserID().then(userID => {
-      console.log("Result of running getUserID from generatePlaylist: " + userID); // CAN BE DELETED
       let createPlaylistURL = `${baseUrl}/users/${userID}/playlists`;
       return fetch (createPlaylistURL, {
         method: "POST",
@@ -95,7 +92,6 @@ let Spotify = {
           console.log (networkError.message);
           }).then (jsonResponse => {
             // Return id of the generated playlist.
-            console.log("Result of generatePlaylist: " + jsonResponse); //CAN BE DELETED
             return jsonResponse.id;
         })
     })
@@ -111,7 +107,6 @@ let Spotify = {
     // Else: initialise variables.
     let populatePlaylistURL;
 
-
     /* Compile list of tracks to populate the playlist with. Format for the body of the requestneeds to be something like:
      {"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]}
     That's not quite trackURIs and not quite JSON.stringify(trackURIs), so ended up creating a fresh "tracksToAdd" array with just the URIs to pass onto the body. */
@@ -126,71 +121,15 @@ let Spotify = {
     this.getUserID().then (userID => {
       this.generatePlaylist(playlistName)
     }).then(playlistID => {
-      populatePlaylistURL = `${baseUrl}/playlists/${playlistID}/tracks`
-    }).then(fetch (populatePlaylistURL, {
+      return fetch (`${baseUrl}/playlists/${playlistID}/tracks`, {
         method: "POST",
         headers: {Authorization: "Bearer " + accessToken, "Content-Type": "application/json"},
         body: JSON.stringify({uris: tracksToAdd})
       })
-    );
+    });
 
   } // End of populatePlaylist()
 
 } // End of Spotify object
-
-
-    // savePlaylist(playlistName, trackURIs) {
-    //   /* Step 90: Check if arguments are empty before proceeding.
-    //   To do: Double-check logic of conditional statement when fully awake. */
-    //   if (!(playlistName && trackURIs)) {
-    //     return;
-    //   }
-    //
-    //   /* Step 91: Define default variables. */
-    //   let accessToken = Spotify.getAccessToken();
-    //   let playlistID;
-    //
-    //   this.getUserID().then (userID => {
-    //     /* Step 93: Use returned user ID to create new playlist and return playlist ID. Have to specify "POST" as method; otherwise the API complains GET/HEAD requests cannot include a body; also apparently need to stringify the body but not too sure why? $MANUCHECK.
-    //     I initially had the playlist set to public: false but apparently that causes the API to return an error 403 because I guess I'm not requesting the right permissions on auth; see https://github.com/rckclmbr/pyportify/issues/60. */
-    //     const createPlaylistURL = `${baseUrl}/users/${userID}/playlists`
-    //     return fetch (createPlaylistURL, {
-    //       method: "POST",
-    //       headers: {Authorization: "Bearer " + accessToken},
-    //       body: JSON.stringify({name: playlistName, description: "Created with Jammming."})
-    //     });
-    //   }).then(response => {
-    //     if (response.ok) {
-    //       return response.json();
-    //     } throw new Error("Request failed!");
-    //   }, networkError => {
-    //     console.log (networkError.message);
-    //   }).then (jsonResponse => {
-    //     playlistID = jsonResponse.id;
-    //     return playlistID;
-    //   }).then(playlistID => {
-    //     const populatePlaylistURL = `${baseUrl}/playlists/${playlistID}/tracks`;
-    //
-    //     let tracksToAdd = []
-    //     trackURIs.forEach(track => {
-    //       tracksToAdd.push("spotify:track:" + track.id);
-    //     })
-    //
-    //     /* So it took a while to figure out the right format for the body of the request below; needs to be something like:
-    //      {"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]}
-    //     That's not quite trackURIs and not quite JSON.stringify(trackURIs), so ended up creating a fresh "tracksToAdd" array with just the URIs to pass onto the body. The following are debugging attempts and can be deleted.
-    //
-    //     console.log ("trackURIs: " + trackURIs);  //CAN BE DELETED
-    //     console.log ("JSON.stringify(trackURIs): " + JSON.stringify(trackURIs));  //CAN BE DELETED
-    //     console.log ("JSON.stringify({uris: trackURIs}): " +  JSON.stringify({uris: trackURIs})); //CAN BE DELETED
-    //     console.log ("tracksToAdd: " + tracksToAdd); //CAN BE DELETED */
-    //
-    //     return fetch (populatePlaylistURL, {
-    //       method: "POST",
-    //       headers: {Authorization: "Bearer " + accessToken, "Content-Type": "application/json"},
-    //       body: JSON.stringify({uris: tracksToAdd})
-    //     });
-    //   });
-
 
 export default Spotify;
