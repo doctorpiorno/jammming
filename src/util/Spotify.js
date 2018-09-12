@@ -1,7 +1,7 @@
 let userAccessToken;
 let expiryTime;
 const clientID = "66315be50a5d42af814984f8a9cf4e2a";
-const redirectURI = "http://doctorpiorno.surge.sh";
+const redirectURI = "http://localhost:3000";
 const baseUrl = "https://api.spotify.com/v1";
 const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
 
@@ -9,7 +9,6 @@ let Spotify = {
   getAccessToken() {
     if (userAccessToken) {
       // Do we have an access token already? If affirmative, that's grand. :)
-      console.log("Already have a userAccessToken."); //CAN BE DELETED
       return userAccessToken;
     } else if (window.location.href.match(/access_token=([^&]*)/) !== null &&
       window.location.href.match(/expires_in=([^&]*)/) !== null) {
@@ -19,7 +18,6 @@ let Spotify = {
       // Step 80: How I was supposed to figure this out without the hint? :S
       window.setTimeout(() => userAccessToken = '', expiryTime * 1000);
       window.history.pushState('Access Token', null, '/');
-      console.log("userAccessToken found in URL."); //CAN BE DELETED
       return userAccessToken
     } else {
       /* Step 83: If URL doesn't contain an access token, redirect the user to authentication page. */
@@ -57,6 +55,24 @@ let Spotify = {
     });
   },
 
+  getUserID() {
+    /* Refinement of step 92. Contacts API to get the current user's ID. */
+    let accessToken = Spotify.getAccessToken();
+    const userProfileUrl = `${baseUrl}/me`;
+
+    return fetch (userProfileUrl, {
+      headers: {Authorization: "Bearer " + accessToken}
+    }).then(response => {
+        if (response.ok) {
+          return response.json();
+        } throw new Error("Request failed!");
+      }, networkError => {
+        console.log (networkError.message);
+      }).then (jsonResponse => {
+        return jsonResponse.id;
+      })
+    },
+
   savePlaylist(playlistName, trackURIs) {
     /* Step 90: Check if arguments are empty before proceeding.
     To do: Double-check logic of conditional statement when fully awake. */
@@ -66,31 +82,15 @@ let Spotify = {
 
     /* Step 91: Define default variables. */
     let accessToken = Spotify.getAccessToken();
-    let authHeader = {
-      Authorization: "Bearer " + accessToken
-    };
-    let userID;
     let playlistID;
 
-    /* Step 92: Request user name. */
-    const userProfileUrl = `${baseUrl}/me`;
-    return fetch (userProfileUrl, {headers: authHeader}).then(response => {
-      if (response.ok) {
-        return response.json();
-      } throw new Error("Request failed!");
-    }, networkError => {
-      console.log (networkError.message);
-    }).then (jsonResponse => {
-      userID = jsonResponse.id;
-      console.log ("User ID is: " + userID);
-      return userID;
-    }).then (userID => {
+    this.getUserID().then (userID => {
       /* Step 93: Use returned user ID to create new playlist and return playlist ID. Have to specify "POST" as method; otherwise the API complains GET/HEAD requests cannot include a body; also apparently need to stringify the body but not too sure why? $MANUCHECK.
       I initially had the playlist set to public: false but apparently that causes the API to return an error 403 because I guess I'm not requesting the right permissions on auth; see https://github.com/rckclmbr/pyportify/issues/60. */
       const createPlaylistURL = `${baseUrl}/users/${userID}/playlists`
       return fetch (createPlaylistURL, {
         method: "POST",
-        headers: authHeader,
+        headers: {Authorization: "Bearer " + accessToken},
         body: JSON.stringify({name: playlistName, description: "Created with Jammming."})
       });
     }).then(response => {
