@@ -78,7 +78,7 @@ let Spotify = {
     /* Refinement of step 93: Use returned user ID to create new playlist and return playlist ID. Have to specify "POST" as method, as otherwise the API complains GET/HEAD requests cannot include a body; also apparently need to stringify the body but not too sure why? $*/
     let accessToken = Spotify.getAccessToken();
 
-    this.getUserID().then(userID => {
+    return this.getUserID().then(userID => {
       let createPlaylistURL = `${baseUrl}/users/${userID}/playlists`;
       return fetch (createPlaylistURL, {
         method: "POST",
@@ -119,7 +119,7 @@ let Spotify = {
     let accessToken = Spotify.getAccessToken();
 
     this.getUserID().then (userID => {
-      this.generatePlaylist(playlistName)
+      return this.generatePlaylist(playlistName)
     }).then(playlistID => {
       return fetch (`${baseUrl}/playlists/${playlistID}/tracks`, {
         method: "POST",
