@@ -21,7 +21,8 @@
   color: #fff;
 }
 
-.Playlist-save {
+.Playlist-save,
+.Playlist-undo {
   cursor: pointer;
   width: 10rem;
   padding: .77rem 0;
