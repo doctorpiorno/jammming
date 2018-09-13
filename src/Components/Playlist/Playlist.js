@@ -18,8 +18,12 @@ class Playlist extends React.Component {
   renderUndo() {
     if (this.props.playlistTracks.length > 0) {
       return <a className="Playlist-undo" onClick={this.props.onUndo}>UNDO</a>;
-    //} else {
-      //return <a className="Playlist-undo" onClick={this.props.onUndo}>NOT UNDO</a>;
+    }
+  }
+
+  renderSave() {
+    if (this.props.playlistTracks.length > 0) {
+      return <a className="Playlist-save" onClick={this.props.onSave}>SAVE TO SPOTIFY</a>;
     }
   }
 
@@ -29,7 +33,7 @@ class Playlist extends React.Component {
         <input defaultValue={"New Playlist"} onChange={this.handleNameChange} />
           <TrackList tracks={this.props.playlistTracks} onRemove={this.props.onRemove} isRemoval={true} />
         {this.renderUndo()}
-        <a className="Playlist-save" onClick={this.props.onSave}>SAVE TO SPOTIFY</a>
+        {this.renderSave()}
       </div>
     )
   }

@@ -83,7 +83,7 @@ let Spotify = {
       return fetch (createPlaylistURL, {
         method: "POST",
         headers: {Authorization: "Bearer " + accessToken},
-        body: JSON.stringify({name: playlistName, description: "Created with Jammming."})
+        body: JSON.stringify({name: playlistName, description: "Created with StruMMM."})
       }).then(response => {
           if (response.ok) {
             return response.json();

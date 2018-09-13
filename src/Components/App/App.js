@@ -24,9 +24,10 @@ class App extends Component {
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
     this.state = {
       foundTracks: [
-        {album: "...And Justice For All", artist: "Metallica", id: "5IX4TbIR5mMHGE4wiWwKW0", name: "One"},
-        {album: "Powerslave (1998 Remastered Edition)", artist: "Iron Maiden", id: "6aYXSH9JZrD30Av2KlAOMY", name: "2 Minutes To Midnight - 1998 Remastered Version"},
-        {album: "3 A.M.", artist: "Jesse & Joy", id: "0yyZN5ASdrYu0XYWFzfxUu", name: "3 A.M."}
+        // Preloaded tracks for testing.
+        // {album: "...And Justice For All", artist: "Metallica", id: "5IX4TbIR5mMHGE4wiWwKW0", name: "One"},
+        // {album: "Powerslave (1998 Remastered Edition)", artist: "Iron Maiden", id: "6aYXSH9JZrD30Av2KlAOMY", name: "2 Minutes To Midnight - 1998 Remastered Version"},
+        // {album: "3 A.M.", artist: "Jesse & Joy", id: "0yyZN5ASdrYu0XYWFzfxUu", name: "3 A.M."}
       ],
       playlistName: "New Playlist",
       playlistTracks: [],
@@ -72,7 +73,6 @@ class App extends Component {
     this.state.playlistTracks.forEach(playlistTrack => {
       if (playlistTrack.id === track.id) {
         alreadyAdded = true;
-        console.log(alreadyAdded)
       }})
 
     /* If track hasn't been added, add it now to the end of the playlist (if we have no "pos" argument) or to the appropriate position if we do have a "pos" argument.
@@ -85,12 +85,11 @@ class App extends Component {
           playlistTracks: this.state.playlistTracks.concat([track])
         });
       } else {
-        let spliceList = this.state.playlistTracks;
-        spliceList.splice(pos, 0, track);
-        console.log (spliceList);
-
+        /* splice() returns an array of deleted items (in this case an empty array, as we're not deleting any). Therefore we cannot directly assign the result of splice(pos, 0, track) to playListTracks, as it would delete our playlist - instead, we'll use an intermediate variable. There's probably a better way to do this, though. */
+        let splicedList = this.state.playlistTracks;
+        splicedList.splice(pos, 0, track);
         this.setState({
-          playlistTracks: spliceList
+          playlistTracks: splicedList
         });
       }
 
@@ -144,7 +143,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>Ja<span className="highlight">mmm</span>ing</h1>
+        <h1>Stru<span className="highlight">MMM</span></h1>
         <div className="App">
           <SearchBar onSearch={this.search} />
           <div className="App-playlist">
