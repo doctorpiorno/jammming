@@ -104,9 +104,6 @@ let Spotify = {
       return;
     }
 
-    // Else: initialise variables.
-    let populatePlaylistURL;
-
     /* Compile list of tracks to populate the playlist with. Format for the body of the requestneeds to be something like:
      {"uris": ["spotify:track:4iV5W9uYEdYUVa79Axb7Rh","spotify:track:1301WleyT98MSxVHPZCA6M"]}
     That's not quite trackURIs and not quite JSON.stringify(trackURIs), so ended up creating a fresh "tracksToAdd" array with just the URIs to pass onto the body. */

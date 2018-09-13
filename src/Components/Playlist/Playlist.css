@@ -34,7 +34,8 @@
   transition: background-color .25s;
 }
 
-.Playlist-save:hover {
+.Playlist-save:hover,
+.Playlist-undo:hover {
   background-color: rgba(108, 65, 233, .7);
 }
 
