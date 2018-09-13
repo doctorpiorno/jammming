@@ -23,7 +23,11 @@ class App extends Component {
 
     //Step 31: Calling the mock tracklist foundTracks rather than searchResults because the official policy of calling everything by the exact same name makes my head hurt.
     this.state = {
-      foundTracks: [],
+      foundTracks: [
+        {album: "...And Justice For All", artist: "Metallica", id: "5IX4TbIR5mMHGE4wiWwKW0", name: "One"},
+        {album: "Powerslave (1998 Remastered Edition)", artist: "Iron Maiden", id: "6aYXSH9JZrD30Av2KlAOMY", name: "2 Minutes To Midnight - 1998 Remastered Version"},
+        {album: "3 A.M.", artist: "Jesse & Joy", id: "0yyZN5ASdrYu0XYWFzfxUu", name: "3 A.M."}
+      ],
       playlistName: "New Playlist",
       playlistTracks: [],
       previousActions: []
@@ -57,8 +61,8 @@ class App extends Component {
     })
   }
 
-  addTrack(track) {
-    /* Step 41: This is a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
+  addTrack(track, pos, isUndo) {
+    /* Step 41: Checking whether a tracak with that ID has already been added. This is a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
     if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
       return;
     } */
@@ -71,50 +75,68 @@ class App extends Component {
         console.log(alreadyAdded)
       }})
 
+    /* If track hasn't been added, add it now to the end of the playlist (if we have no "pos" argument) or to the appropriate position if we do have a "pos" argument.
+    Remember that setState takes an OBJECT, dammit. */
+
     if (alreadyAdded !== true) {
-      /* Step 45: Remember that setState takes an OBJECT, dammit.
-      Using concat here as we're adding to an array of objects, so simply passing track to playlistTracks via setState would replace our array w/ an object and we don't want that. */
-      console.log(alreadyAdded)
-      console.log(track);
-      console.log(this.state.playlistTracks);
 
-      this.setState({
-        playlistTracks: this.state.playlistTracks.concat([track])
-      });
+      if (pos === undefined) {
+        this.setState({
+          playlistTracks: this.state.playlistTracks.concat([track])
+        });
+      } else {
+        let spliceList = this.state.playlistTracks;
+        spliceList.splice(pos, 0, track);
+        console.log (spliceList);
 
-      this.setState({previousActions: this.state.previousActions.concat({
+        this.setState({
+          playlistTracks: spliceList
+        });
+      }
+
+      // Log the action, unless the isUndo parameter is set (i.e. this has been called by the undo() method).
+      if (isUndo === undefined) {
+        this.setState({previousActions: this.state.previousActions.concat({
           actionType: "add",
           track: track,
           position: this.state.playlistTracks.length
-        })
-      });
+          })
+        });
+      }
     }
   }
 
-  removeTrack(track) {
+  removeTrack(track, isUndo) {
     /* Step 49: I was going to do this with .findIndex and .splice but this Looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
     */
 
     let pos = this.state.playlistTracks.findIndex(item => item.id === track.id);
+    console.log("Position: " + pos)
 
     this.setState({
-        playlistTracks: this.state.playlistTracks.filter(item => item.id !== track.id),
-        previousActions: this.state.previousActions.concat({
-          actionType: "remove",
-          track: track,
-          position: pos
-        })
-      });
+      playlistTracks: this.state.playlistTracks.filter(item => item.id !== track.id)});
+
+    // Log the action, unless the isUndo parameter is set (i.e. this has been called by the undo() method).
+    if (isUndo === undefined) {
+      this.setState({
+          previousActions: this.state.previousActions.concat({
+            actionType: "remove",
+            track: track,
+            position: pos
+          })
+        });
+      }
   }
 
   undo() {
       let lastAction = this.state.previousActions.pop();
+
       if (lastAction.actionType === "add") {
-        this.removeTrack(lastAction.track);
+        this.removeTrack(lastAction.track, true);
       } else {
         // Need to implement logic to re-add track at its previous position.
         // That logic would have to go in addTrack proper, right?
-        this.addTrack(lastAction.track);
+        this.addTrack(lastAction.track, lastAction.position, true);
       }
   }
 
