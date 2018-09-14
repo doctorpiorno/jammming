@@ -106,11 +106,10 @@ class App extends Component {
   }
 
   removeTrack(track, isUndo) {
-    /* Step 49: I was going to do this with .findIndex and .splice but this Looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
+    /* Step 49: I was going to do this with .findIndex and .splice but this looks like a good use case for .filter (creates a new array with elements that pass the test implemented by the provided function).
     */
 
     let pos = this.state.playlistTracks.findIndex(item => item.id === track.id);
-    console.log("Position: " + pos)
 
     this.setState({
       playlistTracks: this.state.playlistTracks.filter(item => item.id !== track.id)});
