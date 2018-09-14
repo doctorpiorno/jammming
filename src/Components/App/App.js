@@ -143,12 +143,12 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h1>Stru<span className="highlight">MMM</span></h1>
+        <h1>Stru<span className="highlight">mmm</span></h1>
         <div className="App">
           <SearchBar onSearch={this.search} />
           <div className="App-playlist">
             <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack} />
-            <Playlist playlistTracks={this.state.playlistTracks} onRemove={this.removeTrack} onUndo={this.undo} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} />
+            <Playlist playlistTracks={this.state.playlistTracks} previousActions={this.state.previousActions} onRemove={this.removeTrack} onUndo={this.undo} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} />
           </div>
         </div>
       </div>

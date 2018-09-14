@@ -10,7 +10,7 @@
 /build
 
 # resources
-/res
+/_res
 
 # misc
 .DS_Store

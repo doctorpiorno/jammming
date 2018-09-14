@@ -16,7 +16,7 @@ class Playlist extends React.Component {
   }
 
   renderUndo() {
-    if (this.props.playlistTracks.length > 0) {
+    if (this.props.previousActions.length > 0) {
       return <a className="Playlist-undo" onClick={this.props.onUndo}>UNDO</a>;
     }
   }
