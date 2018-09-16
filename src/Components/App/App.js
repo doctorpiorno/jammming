@@ -55,7 +55,9 @@ class App extends Component {
 
   search(term) {
     Spotify.search(term).then (result => {
-      //Note to self: this.setstate takes brackets + an object, not =. Get that into your slow head, Fran.
+      /* Note to self: this.setstate takes brackets + an object, not =. Get that into your slow head, Fran.
+      Notes from reviewer: Nice job remembering that the Spotify.search() method returns a Promise and properly chaining a .then() before setting your state. 👍
+      Consider renaming the result parameter to foundTracks so that you can use ES6's property/value shorthand syntax here. You can use this whenever you need an object whose key is the same its value (i.e. { searchResults: searchResults } ) and you might find it makes your code more terse. */
       this.setState({
         foundTracks: result
       })
@@ -66,7 +68,9 @@ class App extends Component {
     /* Step 41: Checking whether a tracak with that ID has already been added. This is a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
     if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
       return;
-    } */
+    }
+    Note from reviewer: Consider using .find() or .some() to determine if a track ID exists in the current playlist before adding it in. Iterator methods can make it easier for you to write terse and expressive code. This is much better than relying on the traditional loop. Also, consider breaking out of the forEach loop once the track is found. There's no need to continue searching once you've found the track exists, is there?
+    */
 
     let alreadyAdded = false;
 
