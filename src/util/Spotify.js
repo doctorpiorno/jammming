@@ -1,8 +1,8 @@
 let userAccessToken;
 let expiryTime;
 const clientID = "66315be50a5d42af814984f8a9cf4e2a";
-//const redirectURI = "http://localhost:3000";
-const redirectURI = "http://doctorpiorno.surge.sh";
+const redirectURI = "http://localhost:3000";
+//const redirectURI = "http://doctorpiorno.surge.sh";
 const baseUrl = "https://api.spotify.com/v1";
 const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
 
@@ -98,7 +98,7 @@ let Spotify = {
     })
   },
 
-  populatePlaylist(playlistName, trackURIs) {
+  savePlaylist(playlistName, trackURIs) {
     /* Step 90: Check if arguments are empty before proceeding.
     To do: Double-check logic of conditional statement when fully awake. */
     if (!(playlistName && trackURIs)) {
@@ -116,8 +116,9 @@ let Spotify = {
     /* Requests start here. Get access token, then get user ID, then generate (empty) playlist, then populate it with tracksToAdd. */
     let accessToken = Spotify.getAccessToken();
 
-    this.getUserID().then (userID => {
+    return this.getUserID().then (userID => {
       return this.generatePlaylist(playlistName)
+    //PENDING: MOVE THIS LOGIC TO POPULATEPLAYLIST()
     }).then(playlistID => {
       return fetch (`${baseUrl}/playlists/${playlistID}/tracks`, {
         method: "POST",
@@ -126,7 +127,7 @@ let Spotify = {
       })
     });
 
-  } // End of populatePlaylist()
+  } // End of savePlaylist()
 
 } // End of Spotify object
 

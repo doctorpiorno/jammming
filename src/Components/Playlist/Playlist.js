@@ -27,10 +27,13 @@ class Playlist extends React.Component {
     }
   }
 
+/* Notes from reviewer: Use value attribute instead of defaultValue and give the attribute a value of { this.props.playlistName } so that your form input updates after you save the playlist.
+Besides that, recall that Spotify.savePlaylist() returns a Promise, so you should use .then() to ensure that the Playlist's state is cleared after the playlist has been created and its tracks have been added to it. */
+
   render() {
     return (
       <div className="Playlist">
-        <input defaultValue={"New Playlist"} onChange={this.handleNameChange} />
+        <input value={this.props.playlistName} onChange={this.handleNameChange} />
           <TrackList tracks={this.props.playlistTracks} onRemove={this.props.onRemove} isRemoval={true} />
         {this.renderUndo()}
         {this.renderSave()}

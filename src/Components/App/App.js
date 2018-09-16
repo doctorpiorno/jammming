@@ -42,20 +42,38 @@ class App extends Component {
   }
 
   savePlaylist() {
-    // Step 63: This is how I understand the instructions.
+    /* Step 63: This is how I understand the instructions.
     let trackURIs = [];
       this.state.playlistTracks.forEach(track => {
         trackURIs.push("spotify:track:" + track.id);
+    });
+
+    /* More efficient method suggested by reviewer:
+    - You really only need track.uri. You don't need to prefix anything to the string.
+    - You could also do this on a single line using .map():
+    */
+
+    let trackURIs = this.state.playlistTracks.map(track => track.uri);
+    // Self-note: Do we even need trackURIs then?
+
+    /* Notes from reviewer: You only need a single call to this.setState. Just pass both properties that need to be updated to the state object.
+    Use value attribute instead of defaultValue and give the attribute a value of { this.props.playlistName } so that your form input updates after you save the playlist.
+    Besides that, recall that Spotify.savePlaylist() returns a Promise, so you should use .then() to ensure that the Playlist's state is cleared after the playlist has been created and its tracks have been added to it. */
+
+    Spotify.savePlaylist(this.state.playlistName, this.state.playlistTracks).then (list => {
+      this.setState({
+        playlistTracks: [],
+        playlistName: "New Playlist"
       });
-    Spotify.populatePlaylist(this.state.playlistName, this.state.playlistTracks);
-    // this.updatePlaylistName("New Playlist");
-    this.setState({playlistTracks: []});
-    this.setState({playlistName: "New Playlist"});
+    });
+
   }
 
   search(term) {
     Spotify.search(term).then (result => {
-      //Note to self: this.setstate takes brackets + an object, not =. Get that into your slow head, Fran.
+      /* Note to self: this.setstate takes brackets + an object, not =. Get that into your slow head, Fran.
+      Notes from reviewer: Nice job remembering that the Spotify.search() method returns a Promise and properly chaining a .then() before setting your state. 👍
+      Consider renaming the result parameter to foundTracks so that you can use ES6's property/value shorthand syntax here. You can use this whenever you need an object whose key is the same its value (i.e. { searchResults: searchResults } ) and you might find it makes your code more terse. */
       this.setState({
         foundTracks: result
       })
@@ -66,7 +84,9 @@ class App extends Component {
     /* Step 41: Checking whether a tracak with that ID has already been added. This is a lot less elegant than the solution in the hint, but I'm a caveman and I want to see if my solution works. The much nicer approach in the hint is:
     if (this.state.playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
       return;
-    } */
+    }
+    Note from reviewer: Consider using .find() or .some() to determine if a track ID exists in the current playlist before adding it in. Iterator methods can make it easier for you to write terse and expressive code. This is much better than relying on the traditional loop. Also, consider breaking out of the forEach loop once the track is found. There's no need to continue searching once you've found the track exists, is there?
+    */
 
     let alreadyAdded = false;
 
@@ -147,7 +167,7 @@ class App extends Component {
           <SearchBar onSearch={this.search} />
           <div className="App-playlist">
             <SearchResults foundTracks={this.state.foundTracks} onAdd={this.addTrack} />
-            <Playlist playlistTracks={this.state.playlistTracks} previousActions={this.state.previousActions} onRemove={this.removeTrack} onUndo={this.undo} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} />
+            <Playlist playlistName={this.state.playlistName} playlistTracks={this.state.playlistTracks} previousActions={this.state.previousActions} onRemove={this.removeTrack} onUndo={this.undo} onNameChange={this.updatePlaylistName} onSave={this.savePlaylist} />
           </div>
         </div>
       </div>
